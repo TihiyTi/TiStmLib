@@ -21,6 +21,10 @@ uint8_t * bufUSART3_TX2;
 QueueByte* queueByteUSART4;
 uint8_t * bufUSART4;
 
+// 16 byte in RAM
+QueueByte* queueByteUSART6;
+uint8_t * bufUSART6;
+
 
 //Log data
 //todo вынести в структуру отображающую статус модуля UART буфферов
@@ -53,6 +57,11 @@ void initBuffer(USART_TypeDef* UART, uint32_t speed,
             queueByteUSART4 = queueByte;
             bufUSART4 = buf;
             queueByteUSART4->buf = bufUSART4;
+            break;
+        case (uint32_t) USART6:
+            queueByteUSART6 = queueByte;
+            bufUSART6 = buf;
+            queueByteUSART6->buf = bufUSART6;
             break;
         default:
             break;
@@ -120,7 +129,6 @@ void USART2_IRQHandler(){
 
 #endif
 
-//void USART3_IRQHandler(){
 void USART3_addToBuffer(){
     __disable_irq();
 	if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET){
@@ -136,7 +144,6 @@ void USART3_addToBuffer(){
 }
 
 void USART4_addToBuffer(){
-//void UART4_IRQHandler(){
     __disable_irq();
     if (USART_GetITStatus(UART4, USART_IT_RXNE) != RESET){
         USART_ClearITPendingBit(UART4, USART_IT_RXNE);
@@ -148,6 +155,19 @@ void USART4_addToBuffer(){
     }
     __enable_irq();
 }
+void USART6_addToBuffer(){
+    __disable_irq();
+    if (USART_GetITStatus(USART6, USART_IT_RXNE) != RESET){
+        USART_ClearITPendingBit(USART6, USART_IT_RXNE);
+        uint8_t rxByte = (uint8_t) USART_ReceiveData(USART6);
+        addToQueueByte(queueByteUSART6, rxByte);
+    }
+    if(USART_GetITStatus(USART6, USART_IT_ORE)!= RESET){
+        USART_ClearITPendingBit(USART6, USART_IT_ORE);
+    }
+    __enable_irq();
+}
+
 
 
 uint8_t takeFromRX(USART_TypeDef* UART){
@@ -175,6 +195,13 @@ uint8_t takeFromRX(USART_TypeDef* UART){
             USART_ITConfig(UART4, USART_IT_RXNE, DISABLE);
             result = takeQueueByte(queueByteUSART4);
             USART_ITConfig(UART4, USART_IT_RXNE, ENABLE);
+            break;
+        case (uint32_t) USART6:
+            //Block add element to queue to DISABLE irq from UART
+            // Safety take element from queue
+            USART_ITConfig(USART6, USART_IT_RXNE, DISABLE);
+            result = takeQueueByte(queueByteUSART6);
+            USART_ITConfig(USART6, USART_IT_RXNE, ENABLE);
             break;
         default:
             result = 0;

@@ -16,5 +16,6 @@ void initBufferTX(USART_TypeDef* UART,
                   BufferDoubleByte* bufferDoubleByte, uint8_t * buf1, uint8_t * buf2, uint8_t size);
 void addToTXBuffer(USART_TypeDef* UART, uint8_t addingByte);
 
-void USART4_addToBuffer();
+void USART4_addToBuffer() __attribute__((used));
+void USART6_addToBuffer();
 #endif //STMSAMPLE_UART_BUFFER_H

@@ -6,8 +6,8 @@
  */
 #include "stm32f4xx.h"
 
-#ifndef DSP_H_
-#define DSP_H_
+#ifndef QUEUE_H_
+#define QUEUE_H_
 
 #define SIZE_DSP_BUFFER 256
 

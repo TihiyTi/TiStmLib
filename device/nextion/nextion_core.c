@@ -14,26 +14,26 @@ uint8_t nextionRXarray[32];
 
 int nextionProtocolCrash = 0;
 
-USART_TypeDef * usart = 0;
+USART_TypeDef * nextionUsart = 0;
 
 void NextionHandler(void) __attribute__((used));
 
 void nextionInit(USART_TypeDef *setUsart){
-    usart = setUsart;
-    initBuffer(usart, 9600, &nextionRXQueue, nextionRXarray, 32);
+    nextionUsart = setUsart;
+    initBuffer(nextionUsart, 9600, &nextionRXQueue, nextionRXarray, 32);
 }
 
 void nextionProtocolParse(){
     uint8_t data[7];
-    while (isContainRX(usart) >= NEXTION_WORD){
-        data[0] = takeFromRX(usart);
+    while (isContainRX(nextionUsart) >= NEXTION_WORD){
+        data[0] = takeFromRX(nextionUsart);
         if(data[0] == 0x65){
-            data[1] = takeFromRX(usart);
-            data[2] = takeFromRX(usart);
-            data[3] = takeFromRX(usart);
-            data[4] = takeFromRX(usart);
-            data[5] = takeFromRX(usart);
-            data[6] = takeFromRX(usart);
+            data[1] = takeFromRX(nextionUsart);
+            data[2] = takeFromRX(nextionUsart);
+            data[3] = takeFromRX(nextionUsart);
+            data[4] = takeFromRX(nextionUsart);
+            data[5] = takeFromRX(nextionUsart);
+            data[6] = takeFromRX(nextionUsart);
             if((data[1] == 0x00) && (data[3] == 0x01) &&
                     (data[4] == 0xFF)&& (data[5] == 0xFF)&& (data[6] == 0xFF)){
                 switch(data[2])

@@ -80,7 +80,7 @@ void configUSART(USART_TypeDef* UART, uint32_t speed){
             break;
         case (uint32_t)USART6:
             RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-            RCC_APB1PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
+            RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
             GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_USART6);
             GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_USART6);
             GPIO.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
@@ -209,9 +209,9 @@ void sendUARTByDMA(USART_TypeDef* UART, uint8_t *array, uint8_t size){
             DMA_InitStruct_USART.DMA_Channel = DMA_Channel_4;
             break;
         case (uint32_t) USART6:
-            DMA_Cmd(DMA2_Stream1, DISABLE);
-            while(DMA_GetCmdStatus(DMA2_Stream1) == ENABLE){}
-            DMA_DeInit(DMA2_Stream1);
+            DMA_Cmd(DMA2_Stream6, DISABLE);
+            while(DMA_GetCmdStatus(DMA2_Stream6) == ENABLE){}
+            DMA_DeInit(DMA2_Stream6);
             DMA_InitStruct_USART.DMA_Channel = DMA_Channel_5;
             break;
         default:
@@ -255,9 +255,9 @@ void sendUARTByDMA(USART_TypeDef* UART, uint8_t *array, uint8_t size){
             DMA_Cmd(DMA1_Stream4, ENABLE);
             break;
         case (uint32_t) USART6:
-            DMA_Init(DMA2_Stream1, &DMA_InitStruct_USART);
+            DMA_Init(DMA2_Stream6, &DMA_InitStruct_USART);
             USART_DMACmd(UART, USART_DMAReq_Tx, ENABLE);
-            DMA_Cmd(DMA2_Stream1, ENABLE);
+            DMA_Cmd(DMA2_Stream6, ENABLE);
             break;
         default:
             break;
@@ -279,7 +279,7 @@ uint8_t sendUARTByDMAComplete(USART_TypeDef* UART){
         case (uint32_t) UART4:
             return (uint8_t)(USART_GetFlagStatus(UART, USART_FLAG_TC) == RESET)|(DMA_GetFlagStatus(DMA1_Stream4, DMA_FLAG_TCIF4)==RESET);
         case (uint32_t) USART6:
-            return (uint8_t)(USART_GetFlagStatus(UART, USART_FLAG_TC) == RESET)|(DMA_GetFlagStatus(DMA2_Stream1, DMA_FLAG_TCIF1)==RESET);
+            return (uint8_t)(USART_GetFlagStatus(UART, USART_FLAG_TC) == RESET)|(DMA_GetFlagStatus(DMA2_Stream6, DMA_FLAG_TCIF1)==RESET);
         default:
             return 0;
     }

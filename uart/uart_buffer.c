@@ -264,6 +264,8 @@ uint8_t isContainRX(USART_TypeDef* UART){
         return queueByteUSART3_RX -> size;
     }else if(UART == UART4){
         return queueByteUSART4 -> size;
+    }else if(UART == USART6){
+        return queueByteUSART6 -> size;
     }else{
         return 0;
     }
